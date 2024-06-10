@@ -37,6 +37,11 @@
 
 ### Klonowanie konkretnego brancha
 	1. git clone -b <branch> <remote_repo>
+
+### Sprawdzenie rozmiaru plików w repo
+	git rev-list --disk-usage=human --objects origin/BRANCH
+	git rev-list --disk-usage=human --objects BRANCH
+	git rev-list BRANCH | xargs -n1 git ls-tree -rl | sed -e 's/[^ ]* [^ ]* \(.*\)\t.*/\1/' | sort -u | awk '{ sum += $2 } END { print sum }'
  
 </details>
 
@@ -63,6 +68,69 @@
 <details>
 	<summary> Terraform / Terragrunt</summary>
 
- ### Import tip
+### Import tip
+TIP: jaby zrobić import w terraguncie obiektów które zostały stworzone przez for_each np. subnety to trzeba to zrobić tak:
+	
+ 	terragrunt import 'azurerm_subnet.subnet["snet-house-westeurope-mgmt"]' "/subscriptions/fdd6ed9f-a00f-4c23-acb6-9dbc4275b190/resourceGroups/rg-conectivity-house/providers/Microsoft.Network/virtualNetworks/vnet-house-westeurope/subnets/snet-house-westeurope-mgmt"
+  	terragrunt import 'azurerm_subnet_nat_gateway_association.ng["snet-house-westeurope-backoffice"]' /subscriptions/fdd6ed9f-a00f-4c23-acb6-9dbc4275b190/resourceGroups/rg-conectivity-house/providers/Microsoft.Network/virtualNetworks/vnet-house-westeurope/subnets/snet-house-westeurope-backoffice
+
+a nie tak jak domyślny obiekt:
+
+	terragrunt import azurerm_subnet.subnet /subscriptions/fdd6ed9f-a00f-4c23-acb6-9dbc4275b190/resourceGroups/rg-conectivity-house/providers/Microsoft.Network/virtualNetworks/vnet-house-westeurope/subnets/snet-house-westeurope-mgmt
+	
+</details>
+
+<details>
+	<summary>Network</summary>
+
+### TCP Dump
+ 	tcpdump -nn -s0 -i eth0 -v host ! 35.235.243.224
+  
+  	tcpdump -i eth0 -nn -s0 -v host ! 10.255.169.193 -w source-10.0.18.29.pcap
+
+</details>
+
+<details>
+	<summary>Jenkins</summary>
+	
+### Abort joba
+	Jenkins.instance.getItemByFullName("Order_Process_Monitor_Web_Test_Run")
+		.getBuildByNumber(56710)
+		.finish(hudson.model.Result.ABORTED, 
+			new java.io.IOException("Aborting build")
+	);
+
+### Konwertowanie credentiali na plaintext
+ 	println( hudson.util.Secret.decrypt("{AQAAABAAAABAX6K+NRmq4CqzVUNxoUom74P6LTUezbx6Z0ZtExkfIW8g3ukzf4RSrFbQhK2AXAs9EYEk8XCLyU+jSyYEISidOoQ10Dea+K1OstHMsRMtD1c=}") )
+
+### Wykonanie joba przez CLI na zdalnym Jenkinsie
+	java -jar jenkins-cli.jar -s https://jenkins-bss.lppdev.pl/ -auth jenkinsecom:113063704caa6d03eb9adf9f0b5370e699 build devops/test-devops
+
+### Wylistowanie pluginów
+ 	Jenkins.instance.pluginManager.plugins.each{
+  		plugin -> 
+    			println ("${plugin.getDisplayName()} (${plugin.getShortName()}): ${plugin.getVersion()}")
+	}
+
+### Wyczyszczenie kolejki buildów
+ 	Jenkins.instance.queue.clear()
+### Wyczyszcznie kolejki konkretnych buildów
+	import hudson.model.*
+	def q = Jenkins.instance.queue
+	q.items.findAll { it.task.name.startsWith('REPLACEME') }.each { q.cancel(it.task) }
+
+</details>
+
+<details>
+	<summary>GCP</summary>
+
+### Wylistowanie adresów ip dla subnetu
+	gcloud compute instances list  --filter="networkInterfaces.subnetwork:sandbox-subnet-onprem" --format="value(networkInterfaces[0].networkIP)"
+	gcloud compute networks subnets list --format="value(NAME)"
+	gcloud compute instances list  --filter="networkInterfaces.subnetwork:sandbox-subnet-backofficce" --format="value(networkInterfaces[0].networkIP)"
  
+### Wylistowanie instancji wraz z adresami ip w statusie RUNNING
+	ZONES="europe-west1-b,europe-west1-c,europe-west1-d"
+	gcloud --project=prod-cropp compute instances list --zones=${ZONES} --format="table(name,status,networkInterfaces[0].networkIP)"|grep RUNNING
+
 </details>
