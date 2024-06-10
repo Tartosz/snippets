@@ -134,3 +134,20 @@ a nie tak jak domyślny obiekt:
 	gcloud --project=prod-cropp compute instances list --zones=${ZONES} --format="table(name,status,networkInterfaces[0].networkIP)"|grep RUNNING
 
 </details>
+
+<details>
+	<summary>Azure</summary>
+
+### Usunięcie backendu z Load Balancera w Azure
+Aby usunąć backend z Load Balancera, który wskazuje na np. VMSS to Azure nie pozwoli tego usunąć:
+
+
+	Failed to delete load balancer backend pool 'default'. Error: Cannot remove backend address pool default from load balancer since it is in use by virtual machine scale set
+	/subscriptions/fdd6ed9f-a00f-4c23-acb6-9dbc4275b190/resourceGroups/rg-house-varnish-prod/providers/Microsoft.Compute/virtualMachineScaleSets/vmss-house-varnish-weu-prod.
+
+	az vmss update --resource-group rg-house-varnish-prod --name vmss-house-varnish-weu-prod --remove virtualMachineProfile.networkProfile.networkInterfaceConfigurations[0].ipConfigurations[0].loadBalancerBackendAddressPools 0
+ 
+	az vmss update-instances --instance-ids "*" --name vmss-house-varnish-weu-prod --resource-group rg-house-varnish-prod
+	
+ 	az network lb delete --resouce-group rg-house-varnish-prod --name lb-test-priv
+</details>
