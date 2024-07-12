@@ -151,3 +151,21 @@ Aby usunąć backend z Load Balancera, który wskazuje na np. VMSS to Azure nie 
 	
  	az network lb delete --resouce-group rg-house-varnish-prod --name lb-test-priv
 </details>
+
+<details>
+	<summary>RabbitMQ</summary>
+	
+### Dodanie usera
+	
+	rabbitmqctl add_user monitoring monitoring
+	rabbitmqctl set_permissions -p / monitoring "" "" ".*"
+	rabbitmqctl list_users
+
+	Listing users ...
+	user	tags
+	magento	[administrator]
+	monitoring	[]
+	guest	[administrator]
+	newrelic	[monitoring]
+	
+</details>
