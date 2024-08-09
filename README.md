@@ -42,6 +42,13 @@
 	git rev-list --disk-usage=human --objects origin/BRANCH
 	git rev-list --disk-usage=human --objects BRANCH
 	git rev-list BRANCH | xargs -n1 git ls-tree -rl | sed -e 's/[^ ]* [^ ]* \(.*\)\t.*/\1/' | sort -u | awk '{ sum += $2 } END { print sum }'
+
+### Połączenie commitów w jeden
+	1.  git rebase -i origin/master (wszystkie commity)
+ 	1a. git rebase -i HEAD~n (n liczba commitów do złączenia)
+  	2.  W edytorze wybieramy pierwszy commit jako pick, reszta squash
+   	3.  Poprawiamy commit message
+    	4.  git push --force-with-lease origin NAZWA-BRANCHA
  
 </details>
 
