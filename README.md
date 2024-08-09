@@ -48,6 +48,10 @@
   	2. W edytorze wybieramy pierwszy commit jako pick, reszta squash
    	3. Poprawiamy commit message
 	4. git push --force-with-lease origin NAZWA-BRANCHA
+
+ ### Zmiana commit message
+ 	1. git commit --amend
+  	2. git push --force-with-lease origin NAZWA-BRANCHA
  
 </details>
 
