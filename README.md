@@ -179,3 +179,26 @@ Aby usunąć backend z Load Balancera, który wskazuje na np. VMSS to Azure nie 
 	newrelic	[monitoring]
 	
 </details>
+
+<details>
+	<summary>Internal: Środowiska testowe</summary>
+	
+### Sprawdzenie statusów serwisów
+
+```bash
+#!/bin/bash
+ 
+SERVICES=(rabbitmq-server mysqld elasticsearch nginx php-fpm supervisord redis_arch redis_backend_cropp redis_backend_house redis_backend_mohito redis_backend_reserved redis_backend_sinsay redis_cart_house redis_cart_mohito redis_cart_reserved redis_cart_sinsay redis_conf redis_promo      redis_session varnish@magento mailcatcher)
+
+echo "Sprawdzanie statusu usług:"
+for SERVICE in "${SERVICES[@]}"; do
+    STATUS=$(systemctl is-active $SERVICE 2>/dev/null)
+    if [ "$STATUS" == "active" ]; then
+      echo -e "$SERVICE: \e[32mRunning\e[0m"
+    else
+      echo -e "$SERVICE: \e[31mError\e[0m" 
+    fi
+done
+```
+    
+</details>
